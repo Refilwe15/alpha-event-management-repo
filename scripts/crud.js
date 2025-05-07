@@ -81,7 +81,19 @@ function resetForm() {
   });
 
 //EDIT EVENT
-  
+  window.editEvent = function(index) {
+  const event = getEvents()[index];
+  document.getElementById('eventTitle').value = event.title;
+  document.getElementById('eventDate').value = event.date;
+  document.getElementById('eventTime').value = event.time;
+  document.getElementById('eventLocation').value = event.location;
+  document.getElementById('eventDescription').value = event.description;
+  document.getElementById('eventGuests').value = event.guests;
+  document.getElementById('eventImage').value = event.image;
+
+  editIndex = index;
+  eventModal.style.display = 'flex';
+};
 //DELETE EVENT
 
 function deleteEvent(index) {
