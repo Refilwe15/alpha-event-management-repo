@@ -30,7 +30,8 @@
                     <input type="password" id="password" placeholder="Enter your password" required>
                 </div>
                
-                <button type="submit" class="login-btn" onclick="location.href='pages/dashboard.html'; return false;">Sign in</button>
+                <button type="submit" class="login-btn">Sign in</button>
+
                
                 <div class="form-footer">
                     <p>Don't have an account? <a href="pages/dashboard.html">Sign up</a></p>
@@ -48,5 +49,31 @@
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault(); 
+        
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+        
+            
+            if (!email || !password) {
+                alert("Please enter both email and password.");
+                return;
+            }
+        
+            
+            const passwordRegex = /^(?=.*[\W_]).{8,}$/;
+        
+            if (!passwordRegex.test(password)) {
+                alert("Password must be at least 8 characters long and contain at least one special character.");
+                return;
+            }
+        
+            
+            location.href = 'pages/dashboard.html';
+        });
+        </script>
+        
 </body>
 </html>
