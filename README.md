@@ -1,1 +1,0 @@
-# alpha-event-management-repo
