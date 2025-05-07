@@ -81,7 +81,21 @@ function resetForm() {
   });
 
 //EDIT EVENT
-
+  
 //DELETE EVENT
+
+  // DELETE EVENT
+function deleteEvent(index) {
+  const confirmed = confirm("Are you sure you want to delete this event?");
+  if (confirmed) {
+    const events = getEvents();     // Fetch existing events
+    events.splice(index, 1);        // Remove the selected event by index
+    saveEvents(events);             // Save updated events to localStorage
+    renderEvents();                 // Refresh the event list in the UI
+    alert("Event deleted successfully!");
+  }
+}
+
+
 
 renderEvents();
