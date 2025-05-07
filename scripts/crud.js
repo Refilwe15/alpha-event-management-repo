@@ -14,9 +14,30 @@ function saveEvents(events) {
   localStorage.setItem('events', JSON.stringify(events));
 }
 
-//READ EVENT
+//READ EVENT(Thabang)
 
-
+function renderEvents() {
+ eventsContainer.innerHTML = '';
+  const events = getEvents();
+  events.forEach((event, index) => {
+    const eventCard = document.createElement('div');
+    eventCard.classList.add('event-card');
+    eventCard.innerHTML = `
+      <h3>${event.title}</h3>
+      <p><strong>Date:</strong> ${event.date}</p>
+      <p><strong>Time:</strong> ${event.time}</p>
+      <p><strong>Location:</strong> ${event.location}</p>
+      <p><strong>Description:</strong> ${event.description}</p>
+      <p><strong>Guests:</strong> ${event.guests}</p>
+      <img src="${event.image || 'https://via.placeholder.com/150'}" />
+      <div style="margin-top:10px;">
+        <button onclick="editEvent(${index})">Edit</button>
+        <button onclick="deleteEvent(${index})">Delete</button>
+      </div>
+    `;
+    eventsContainer.appendChild(eventCard);
+  });
+}
 //
 function resetForm() {
     eventForm.reset();
