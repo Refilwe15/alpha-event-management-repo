@@ -110,3 +110,72 @@ function deleteEvent(index) {
 
 
 renderEvents();
+
+// SEARCH EVENT(ELVIS boka 223114075)
+const searchInput = document.getElementById('searchInput');
+const searchBtn = document.getElementById('searchBtn');
+
+searchBtn.addEventListener('click', () => {
+  const query = searchInput.value.trim().toLowerCase();
+  const allEvents = getEvents();
+
+  const filteredEvents = allEvents.filter(event =>
+    event.title.toLowerCase().includes(query) ||
+    event.date.toLowerCase().includes(query) ||
+    event.time.toLowerCase().includes(query) ||
+    event.location.toLowerCase().includes(query) ||
+    event.description.toLowerCase().includes(query) ||
+    event.guests.toLowerCase().includes(query)
+  );
+
+  displayFilteredEvents(filteredEvents);
+});
+
+function displayFilteredEvents(events) {
+  eventsContainer.innerHTML = '';
+  if (events.length === 0) {
+    eventsContainer.innerHTML = '<p>No matching events found.</p>';
+    return;
+  }
+
+  events.forEach((event, index) => {
+    const eventCard = document.createElement('div');
+    eventCard.classList.add('event-card');
+    eventCard.innerHTML = `
+      <h3>${event.title}</h3>
+      <p><strong>Date:</strong> ${event.date}</p>
+      <p><strong>Time:</strong> ${event.time}</p>
+      <p><strong>Location:</strong> ${event.location}</p>
+      <p><strong>Description:</strong> ${event.description}</p>
+      <p><strong>Guests:</strong> ${event.guests}</p>
+      <img src="${event.image || 'https://via.placeholder.com/150'}" />
+      <div style="margin-top:10px;">
+        <button onclick="editEvent(${index})">Edit</button>
+        <button onclick="deleteEvent(${index})">Delete</button>
+      </div>
+    `;
+    eventsContainer.appendChild(eventCard);
+  });
+}
+// to show all events if nothing is entered to in thr search bar 
+
+searchBtn.addEventListener('click', () => {
+  const query = searchInput.value.trim().toLowerCase();
+  if (!query) {
+    renderEvents(); // show all if empty
+    return;
+  }
+
+  const allEvents = getEvents();
+  const filteredEvents = allEvents.filter(event =>
+    event.title.toLowerCase().includes(query) ||
+    event.date.toLowerCase().includes(query) ||
+    event.time.toLowerCase().includes(query) ||
+    event.location.toLowerCase().includes(query) ||
+    event.description.toLowerCase().includes(query) ||
+    event.guests.toLowerCase().includes(query)
+  );
+
+  displayFilteredEvents(filteredEvents);
+});
+
