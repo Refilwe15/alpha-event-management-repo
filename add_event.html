@@ -3,12 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Add Event</title>
+  <style>
+    #success-message {
+      color: green;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
   <h2>Add Event</h2>
 
-  <form>
+  <form id="eventForm">
     <p>
       <label for="title">Title:</label><br>
       <input type="text" id="title" name="title" placeholder="Enter event title" required>
@@ -38,6 +45,27 @@
       <button type="submit">Add Event</button>
     </p>
   </form>
+
+  <div id="success-message">Event successfully added</div>
+
+  <script>
+    // Restrict date input to today or future only
+    const dateInput = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+
+    // Handle form submission
+    const form = document.getElementById('eventForm');
+    const successMessage = document.getElementById('success-message');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // Prevent actual form submission
+      successMessage.style.display = 'block';
+      form.reset();
+      // Reapply min date after reset
+      dateInput.min = today;
+    });
+  </script>
 
 </body>
 </html>
