@@ -1,0 +1,75 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/focal64"
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "4096"
+    vb.cpus = 2
+  end
+
+  # Network configuration
+  config.vm.network "forwarded_port", guest: 8080, host: 8080  # Java backend
+  config.vm.network "forwarded_port", guest: 8000, host: 8000  # Python vision service
+
+  # Shared folders
+  config.vm.synced_folder ".", "/vagrant"
+  config.vm.synced_folder "python/vision_service", "/home/vagrant/vision_service"
+  config.vm.synced_folder "java/pest-backend", "/home/vagrant/pest-backend"
+
+  # Provisioning script
+  config.vm.provision "shell", inline: <<-SHELL
+    # Update and install basic dependencies
+    apt-get update
+    apt-get install -y python3-pip python3-venv openjdk-17-jdk maven docker.io
+
+    # Setup Python environment
+    cd /home/vagrant/vision_service
+    python3 -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+
+    # Setup Java environment
+    cd /home/vagrant/pest-backend
+    mvn clean install -DskipTests
+
+    # Install Docker Compose
+    curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+
+    # Add vagrant user to docker group
+    usermod -aG docker vagrant
+
+    # Create startup script
+    cat > /home/vagrant/start_services.sh <<EOL
+#!/bin/bash
+# Start Python Vision Service
+cd /home/vagrant/vision_service
+source venv/bin/activate
+python3 app/main.py &
+
+# Start Java Backend
+cd /home/vagrant/pest-backend
+mvn spring-boot:run &
+EOL
+
+    chmod +x /home/vagrant/start_services.sh
+  SHELL
+
+  # Post message
+  config.vm.post_up_message = "
+    PestVision Development Environment is ready!
+    
+    Access points:
+    - Java Backend: http://localhost:8080
+    - Vision Service: http://localhost:8000
+    
+    To start all services:
+    $ vagrant ssh
+    $ ./start_services.sh
+    
+    To access individual components:
+    - Vision Service: cd /home/vagrant/vision_service
+    - Java Backend: cd /home/vagrant/pest-backend
+  "
+end
